@@ -1,0 +1,50 @@
+#step 1
+FROM index.alauda.cn/library/ubuntu:14.04
+
+MAINTAINER zjm "383248689@qq.com"
+
+RUN sourcesPath="/etc/apt/sources.list" && \
+        mv $sourcesPath $sourcesPath.backup && \
+        touch $sourcesPath && \
+        echo "deb http://mirrors.163.com/ubuntu/ trusty main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb http://mirrors.163.com/ubuntu/ trusty-updates main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb http://mirrors.163.com/ubuntu/ trusty-proposed main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb http://mirrors.163.com/ubuntu/ trusty-backports main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb-src http://mirrors.163.com/ubuntu/ trusty main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb-src http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb-src http://mirrors.163.com/ubuntu/ trusty-updates main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb-src http://mirrors.163.com/ubuntu/ trusty-proposed main restricted universe multiverse" >> $sourcesPath && \
+        echo "deb-src http://mirrors.163.com/ubuntu/ trusty-backports main restricted universe multiverse" >> $sourcesPath && \
+        apt-get update
+
+RUN apt-get install -y wget && \
+        apt-get install -y libpcre3 libpcre3-dev && \
+        apt-get install -y libssl-dev && \
+        apt-get install -y openssl && \
+        apt-get install -y gcc && \
+        apt-get install -y make && \
+        mkdir -p /usr/local/src/nginx
+
+#step 2
+RUN wget 'http://nginx.org/download/nginx-1.9.11.tar.gz' -O /usr/local/src/nginx/nginx-1.9.11.tar.gz && \
+        cd /usr/local/src/nginx && \
+        tar -zxvf nginx-1.9.11.tar.gz && \
+        cd nginx-1.9.11 && \
+        mkdir -p /usr/local/nginx && \
+        ./configure --prefix=/usr/local/nginx && \
+        make && \
+        make install && \
+        rm -rf /usr/local/src/nginx
+
+#step 3
+RUN wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx && \
+        chmod +x /etc/init.d/nginx && \
+        sed -i 's/DAEMON=${DAEMON:-$NGINXPATH\/sbin\/nginx}/DAEMON=\/usr\/local\/nginx\/sbin\/nginx/' /etc/init.d/nginx && \
+        sed -i 's/PIDSPATH=${PIDSPATH:-$NGINXPATH\/logs}/PIDSPATH=\/usr\/local\/nginx\/logs/' /etc/init.d/nginx && \
+        sed -i 's/NGINX_CONF_FILE=${NGINX_CONF_FILE:-$NGINXPATH\/conf\/nginx.conf}/NGINX_CONF_FILE="\/usr\/local\/nginx\/conf\/nginx.conf"/' /etc/init.d/nginx && \
+        sed -i '1s/^/\/etc\/init.d\/nginx start\n/'  /etc/rc.local
+
+#step 4
+EXPOSE 80
+EXPOSE 443
