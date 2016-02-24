@@ -45,6 +45,6 @@ RUN wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O 
         sed -i 's/NGINX_CONF_FILE=${NGINX_CONF_FILE:-$NGINXPATH\/conf\/nginx.conf}/NGINX_CONF_FILE="\/usr\/local\/nginx\/conf\/nginx.conf"/' /etc/init.d/nginx && \
         sed -i '1s/^/\/etc\/init.d\/nginx start\n/'  /etc/rc.local
 
-#step 4：添加成系统服务
+#step 4：开放端口，80为http端口；443为https端口
 EXPOSE 80
 EXPOSE 443
