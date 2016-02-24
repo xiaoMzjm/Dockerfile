@@ -1,4 +1,4 @@
-#step 1
+#step 1：更新源和下载依赖软件，无删除缓存
 FROM index.alauda.cn/library/ubuntu:14.04
 
 MAINTAINER zjm "383248689@qq.com"
@@ -26,7 +26,7 @@ RUN apt-get install -y wget && \
         apt-get install -y make && \
         mkdir -p /usr/local/src/nginx
 
-#step 2
+#step 2：下载软件并编译安装
 RUN wget 'http://nginx.org/download/nginx-1.9.11.tar.gz' -O /usr/local/src/nginx/nginx-1.9.11.tar.gz && \
         cd /usr/local/src/nginx && \
         tar -zxvf nginx-1.9.11.tar.gz && \
@@ -37,7 +37,7 @@ RUN wget 'http://nginx.org/download/nginx-1.9.11.tar.gz' -O /usr/local/src/nginx
         make install && \
         rm -rf /usr/local/src/nginx
 
-#step 3
+#step 3：添加成系统服务
 RUN wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O /etc/init.d/nginx && \
         chmod +x /etc/init.d/nginx && \
         sed -i 's/DAEMON=${DAEMON:-$NGINXPATH\/sbin\/nginx}/DAEMON=\/usr\/local\/nginx\/sbin\/nginx/' /etc/init.d/nginx && \
@@ -45,6 +45,6 @@ RUN wget https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx -O 
         sed -i 's/NGINX_CONF_FILE=${NGINX_CONF_FILE:-$NGINXPATH\/conf\/nginx.conf}/NGINX_CONF_FILE="\/usr\/local\/nginx\/conf\/nginx.conf"/' /etc/init.d/nginx && \
         sed -i '1s/^/\/etc\/init.d\/nginx start\n/'  /etc/rc.local
 
-#step 4
+#step 4：添加成系统服务
 EXPOSE 80
 EXPOSE 443
