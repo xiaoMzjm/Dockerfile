@@ -1,1 +1,0 @@
-echo "$1 $2 $3" | mutt -s "keepalived notify" heijueerror@163.com
