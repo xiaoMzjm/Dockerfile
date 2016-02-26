@@ -10,7 +10,7 @@ echo "set sendmail="/usr/bin/msmtp"" >> /etc/Muttrc && \
     echo "set realname="myname"" >> /etc/Muttrc && \
     echo "set from=$FROMEMAIL" >> /etc/Muttrc && \
     echo "set envelope_from=yes" >> /etc/Muttrc && \
-    touch ~/.msmtprc && \
+    rm ~/.msmtprc && \
     touch ~/.msmtprc && \
     echo "account default" >> ~/.msmtprc && \
     echo "host smtp.qq.com" >> ~/.msmtprc && \
